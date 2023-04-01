@@ -1,0 +1,572 @@
+<Ui xmlns="http://www.runewaker.com/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.runewaker.com/UI.xsd">
+	<Frame name="ExtraTipLoad" parent="UIParent">
+		<Scripts>
+			<OnLoad>
+				ExtraTip.OnLoad(this)
+			</OnLoad>
+			<OnEvent>
+				ExtraTip.OnEvent(event)
+			</OnEvent>
+		</Scripts>
+	</Frame>
+	<CheckButton name="ExtraTipCheckButtonTemp" inherits="UIPanelCheckButtonTemplate" virtual="true">
+		<Size>
+			<AbsDimension x="25" y="25"/>
+		</Size>
+		<Layers>
+			<Layer>
+				<FontString name="$parentName" inherits="GameFontNormal" justifyH="LEFT">
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="RIGHT"/>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+	</CheckButton>
+	<EditBox name="ExtraTipEditBoxTemp" inherits="UIPanelEditBoxTemplate" virtual="true" numeric="true">
+		<Layers>
+			<Layer>
+				<FontString name="$parentName" inherits="GameFontHighlight" justifyH="LEFT">
+					<Anchors>
+						<Anchor point="RIGHT" relativePoint="LEFT"/>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnEnter>
+				GameTooltip:SetOwner(this, "ANCHOR_BOTTOM", 0, 0)
+				GameTooltip:SetText(ExtraTip.Lang["Enter"])
+			</OnEnter>
+			<OnLeave>
+				GameTooltip:Hide()
+			</OnLeave>
+		</Scripts>
+	</EditBox>
+	<StatusBar name="ExtraTipBarTemp" virtual="true" minValue="0" maxValue="100" hidden="true">
+		<BarTexture file="Interface\Common\Bar\steel"/>
+		<Size>
+			<AbsDimension x="180" y="12"/>
+		</Size>
+		<Anchors>
+			<Anchor point="BOTTOM" relativePoint="TOP"/>
+		</Anchors>
+		<Layers>
+			<Layer>
+				<Texture file="Interface\Common\Block-Fill">
+					<Color r="0" g="0" b="0" a="0.3"/>
+				</Texture>
+			</Layer>
+			<Layer level="ARTWORK">
+				<FontString name="$parentText" inherits="GameFontHighlight" text="100%">
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+	</StatusBar>
+	<StatusBar name="ExtraTipHealthBar" inherits="ExtraTipBarTemp" parent="GameTooltip">
+		<Scripts>
+			<OnLoad>
+				this:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
+				this:RegisterEvent("UNIT_HEALTH")
+			</OnLoad>
+			<OnEvent>
+				if ExtraTipSet["All"] and ExtraTipSet["Hbar"] then
+					ExtraTip.HealthBar(this)
+				end
+			</OnEvent>
+		</Scripts>
+	</StatusBar>
+	<StatusBar name="ExtraTipCastingBar" inherits="ExtraTipBarTemp" parent="ExtraTipHealthBar">
+		<BarColor r="1" g="1" b="0" a="1"/>
+		<Layers>
+			<Layer level="OVERLAY">
+				<Texture name="$parentSpark" file="Interface\CastingBar\CastingBar-Spark" alphaMode="ADD">
+					<Size>
+						<AbsDimension x="32" y="32"/>
+					</Size>
+					<Anchors>
+						<Anchor point="LEFT"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				this:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
+				this:RegisterEvent("UNIT_CASTINGTIME")
+			</OnLoad>
+			<OnEvent>
+				if ExtraTipSet["All"] and ExtraTipSet["Cbar"] then
+					ExtraTip.CastingBar(this)
+				end
+			</OnEvent>
+			<OnUpdate>
+				if ExtraTipSet["All"] and ExtraTipSet["Cbar"] then
+					ExtraTip.CastingBar(this)
+					ExtraTip.CastingBarFadeOut(this, elapsedTime)
+				end
+			</OnUpdate>
+		</Scripts>
+	</StatusBar>
+	<GameTooltip name="ExtraTipBuffTooltip" inherits="GameTooltipTemplate" parent="UIParent" frameStrata="DIALOG" hidden="true">
+		<Size>
+			<AbsDimension x="218" y="55"/>
+		</Size>
+		<Anchors>
+			<Anchor point="TOPLEFT" relativeTo="GameTooltip" relativePoint="BOTTOMLEFT"/>
+		</Anchors>
+		<Scripts>
+			<OnLoad>
+				this:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
+				this:RegisterEvent("UNIT_BUFF_CHANGED")
+			</OnLoad>
+			<OnEvent>
+				ExtraTip.BuffEvent(this)
+			</OnEvent>
+			<OnUpdate>
+				ExtraTip.BuffTimeUpdate(this, elapsedTime)
+			</OnUpdate>
+		</Scripts>
+	</GameTooltip>
+	<Frame name="ExtraTipGUI" parent="UIParent" inherits="UICommonFrameTemplate" hidden="true" frameLevel="1">
+		<Size>
+			<AbsDimension x="300" y="390"/>
+		</Size>
+		<Anchors>
+			<Anchor point="CENTER"/>
+		</Anchors>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parentVersion" inherits="GameFontGray" text="Version">
+					<Anchors>
+						<Anchor point="BOTTOMRIGHT">
+							<Offset>
+								<AbsDimension x="-20" y="-10"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<CheckButton name="$parentEnable" inherits="UIPanelCheckButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="22" y="32"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString name="$parentName" inherits="GameFontNormalLarge" justifyH="LEFT" text="ON">
+							<Anchors>
+								<Anchor point="LEFT" relativePoint="RIGHT"/>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnClick>
+						ExtraTipSet["All"] = this:IsChecked()
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+			<EditBox name="$parentWidth" inherits="ExtraTipEditBoxTemp">
+				<Size>
+					<AbsDimension x="35" y="18"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="225" y="40"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnEnterPressed>
+						SlashCmdList.ExtraTip(nil, this:GetText())
+					</OnEnterPressed>
+				</Scripts>
+			</EditBox>
+			<CheckButton name="$parentFix" inherits="ExtraTipCheckButtonTemp">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="25" y="60"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						ExtraTipSet["Fix"] = this:IsChecked()
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+			<Button name="$parentDummy" inherits="UIPanelButtonTemplate">
+				<Size>
+					<AbsDimension x="100" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentFix">
+						<Offset>
+							<AbsDimension x="138" y="1"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						ToggleUIFrame(ExtraTipDummy)
+					</OnClick>
+				</Scripts>
+			</Button>
+			<EditBox name="$parentX" inherits="ExtraTipEditBoxTemp">
+				<Size>
+					<AbsDimension x="50" y="18"/>
+				</Size>
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentFix">
+						<Offset>
+							<AbsDimension x="110" y="18"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnEnterPressed>
+						ExtraTip.Offset()
+					</OnEnterPressed>
+				</Scripts>
+			</EditBox>
+			<EditBox name="$parentY" inherits="ExtraTipEditBoxTemp">
+				<Size>
+					<AbsDimension x="50" y="18"/>
+				</Size>
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentFix">
+						<Offset>
+							<AbsDimension x="185" y="18"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnEnterPressed>
+						ExtraTip.Offset()
+					</OnEnterPressed>
+				</Scripts>
+			</EditBox>
+			<Slider name="$parentAlpha" orientation="HORIZONTAL">
+				<Size>
+					<AbsDimension x="200" y="10"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="120"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture name="$parentLeft" file="Interface\BagFrame\BagFrame-Slider-Border">
+							<Size>
+								<AbsDimension x="16" y="10"/>
+							</Size>
+							<Anchors>
+								<Anchor point="LEFT"/>
+							</Anchors>
+							<TexCoords left="0" right="0.25" top="0" bottom="1"/>
+						</Texture>
+						<Texture name="$parentRight" file="Interface\BagFrame\BagFrame-Slider-Border">
+							<Size>
+								<AbsDimension x="16" y="10"/>
+							</Size>
+							<Anchors>
+								<Anchor point="RIGHT"/>
+							</Anchors>
+							<TexCoords left="0.75" right="1" top="0" bottom="1"/>
+						</Texture>
+						<Texture file="Interface\BagFrame\BagFrame-Slider-Border">
+							<Size>
+								<AbsDimension x="1" y="10"/>
+							</Size>
+							<Anchors>
+								<Anchor point="LEFT" relativeTo="$parentLeft" relativePoint="RIGHT"/>
+								<Anchor point="RIGHT" relativeTo="$parentRight" relativePoint="LEFT"/>
+							</Anchors>
+							<TexCoords left="0.25" right="0.75" top="0" bottom="1"/>
+						</Texture>
+					</Layer>
+					<Layer level="ARTWORK">
+						<FontString name="$parentText" inherits="GameFontHighlight">
+							<Anchors>
+								<Anchor point="BOTTOM" relativePoint="TOP"/>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnLoad>
+						this:SetValueStepMode("FLOAT")
+						this:SetMinMaxValues(0,1)
+						this:SetValue(1)
+					</OnLoad>
+					<OnValueChanged>
+						ExtraTip.GUIAlpha(this)
+					</OnValueChanged>
+					<OnMouseWheel>
+						this:SetValue(this:GetValue() + delta / math.abs(delta) * .01)
+					</OnMouseWheel>
+				</Scripts>
+				<ThumbTexture file="Interface\BagFrame\BagFrame-Slider-Knob">
+					<Size>
+						<AbsDimension x="16" y="16"/>
+					</Size>
+				</ThumbTexture>
+			</Slider>
+			<CheckButton name="$parentPlayer" inherits="ExtraTipCheckButtonTemp">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="25" y="140"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						ExtraTipSet["Player"] = this:IsChecked()
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="$parentMonster" inherits="ExtraTipCheckButtonTemp">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="25" y="160"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						ExtraTipSet["Monster"] = this:IsChecked()
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="$parentPet" inherits="ExtraTipCheckButtonTemp">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="25" y="180"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						ExtraTipSet["Pet"] = this:IsChecked()
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="$parent1v1" inherits="ExtraTipCheckButtonTemp">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="25" y="200"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						ExtraTipSet["1v1"] = this:IsChecked()
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="$parentMana" inherits="ExtraTipCheckButtonTemp">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="25" y="220"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						ExtraTipSet["Mana"] = this:IsChecked()
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="$parentHealthBar" inherits="ExtraTipCheckButtonTemp">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="25" y="240"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						ExtraTipSet["Hbar"] = this:IsChecked()
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="$parentCastingBar" inherits="ExtraTipCheckButtonTemp">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="25" y="260"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						ExtraTipSet["Cbar"] = this:IsChecked()
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="$parentClass" inherits="ExtraTipCheckButtonTemp">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="25" y="280"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						ExtraTipSet["Class"] = this:IsChecked()
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="$parentDifficulty" inherits="ExtraTipCheckButtonTemp">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="25" y="300"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						ExtraTipSet["Diff"] = this:IsChecked()
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="$parentBuff" inherits="ExtraTipCheckButtonTemp">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="25" y="320"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						ExtraTipSet["Buff"] = this:IsChecked()
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+			<EditBox name="$parentBuffSec" inherits="ExtraTipEditBoxTemp" letters="14">
+				<Size>
+					<AbsDimension x="35" y="18"/>
+				</Size>
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentBuff">
+						<Offset>
+							<AbsDimension x="200" y="18"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnEnterPressed>
+						SlashCmdList.ExtraTipBuff(nil, this:GetText())
+					</OnEnterPressed>
+				</Scripts>
+			</EditBox>
+		</Frames>
+		<Scripts>
+			<OnShow>
+				ExtraTip.GUIShow(this)
+			</OnShow>
+		</Scripts>
+	</Frame>
+	<Frame name="ExtraTipDummy" parent="UIParent" hidden="true" enableMouse="true" frameLevel="2">
+		<Size>
+			<AbsDimension x="100" y="100"/>
+		</Size>
+		<Anchors>
+			<Anchor point="TOPLEFT"/>
+		</Anchors>
+		<Backdrop edgeFile="Interface\Tooltips\Tooltip-Border" bgFile="Interface\Tooltips\Tooltip-Background">
+			<BackgroundInsets>
+				<AbsInset top="4" left="4" bottom="4" right="4"/>
+			</BackgroundInsets>
+			<EdgeSize>
+				<AbsValue val="16"/>
+			</EdgeSize>
+			<TileSize>
+				<AbsValue val="16"/>
+			</TileSize>
+		</Backdrop>
+		<Frames>
+			<RadioButton name="$parentTOPLEFT" inherits="UIPanelRadioButtonTemplate" id="1">
+				<Anchors>
+					<Anchor point="TOPLEFT"/>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						ExtraTipSet["Anchor"] = "TOPLEFT"
+					</OnClick>
+				</Scripts>
+			</RadioButton>
+			<RadioButton name="$parentTOPRIGHT" inherits="UIPanelRadioButtonTemplate" id="2">
+				<Anchors>
+					<Anchor point="TOPRIGHT"/>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						ExtraTipSet["Anchor"] = "TOPRIGHT"
+					</OnClick>
+				</Scripts>
+			</RadioButton>
+			<RadioButton name="$parentBOTTOMLEFT" inherits="UIPanelRadioButtonTemplate" id="3">
+				<Anchors>
+					<Anchor point="BOTTOMLEFT"/>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						ExtraTipSet["Anchor"] = "BOTTOMLEFT"
+					</OnClick>
+				</Scripts>
+			</RadioButton>
+			<RadioButton name="$parentBOTTOMRIGHT" inherits="UIPanelRadioButtonTemplate" id="4">
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT"/>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						ExtraTipSet["Anchor"] = "BOTTOMRIGHT"
+					</OnClick>
+				</Scripts>
+			</RadioButton>
+		</Frames>
+		<Scripts>
+			<OnShow>
+				ExtraTip.DummyShow()
+			</OnShow>
+			<OnEnter>
+				GameTooltip:SetOwner(this,"ANCHOR_TOPLEFT",0,80)
+				GameTooltip:SetText(ExtraTip.Lang["Anchor"])
+			</OnEnter>
+			<OnLeave>
+				GameTooltip:Hide()
+			</OnLeave>
+			<OnDragStart>
+				this:StartMoving()
+			</OnDragStart>
+			<OnDragStop>
+				ExtraTip.DummyMove(this)
+			</OnDragStop>
+		</Scripts>
+	</Frame>
+</Ui>
