@@ -1,5 +1,21 @@
 # ExtraTip
 
+![](https://media.forgecdn.net/attachments/146/81/All.png)  
+![](https://media.forgecdn.net/attachments/146/71/Monster1.png)
+![](https://media.forgecdn.net/attachments/146/78/Monster2.png)
+![](https://media.forgecdn.net/attachments/146/79/Monster3.png)  
+![](https://media.forgecdn.net/attachments/146/72/Boss.png)
+![](https://media.forgecdn.net/attachments/146/73/Elite.png)  
+![](https://media.forgecdn.net/attachments/146/62/Pet1.png)
+![](https://media.forgecdn.net/attachments/146/66/Pet2.png)  
+![](https://media.forgecdn.net/attachments/146/61/Player2.png)
+![](https://media.forgecdn.net/attachments/146/74/Player1.png)
+![](https://media.forgecdn.net/attachments/146/83/New_Buff.png)  
+![Support](https://media.forgecdn.net/attachments/146/65/Support1.png "Support")
+![Support](https://media.forgecdn.net/attachments/146/76/Support2.png "Support)  
+![](https://media.forgecdn.net/attachments/146/68/HealthBar1.png)
+![](https://media.forgecdn.net/attachments/146/69/HealthBar2.png)  
+![](https://media.forgecdn.net/attachments/146/67/GUI.png)
 
 ## Features
 
