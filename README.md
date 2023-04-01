@@ -12,7 +12,7 @@
 ![](https://media.forgecdn.net/attachments/146/74/Player1.png)
 ![](https://media.forgecdn.net/attachments/146/83/New_Buff.png)  
 ![Support](https://media.forgecdn.net/attachments/146/65/Support1.png "Support")
-![Support](https://media.forgecdn.net/attachments/146/76/Support2.png "Support)  
+![Support](https://media.forgecdn.net/attachments/146/76/Support2.png "Support")  
 ![](https://media.forgecdn.net/attachments/146/68/HealthBar1.png)
 ![](https://media.forgecdn.net/attachments/146/69/HealthBar2.png)  
 ![](https://media.forgecdn.net/attachments/146/67/GUI.png)
